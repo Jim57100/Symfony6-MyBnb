@@ -9,7 +9,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -58,17 +57,11 @@ class AdType extends AbstractType
                 'rooms', IntegerType::class, $this->getFormConfiguration('Nombre de chambre', 'Nombre de chambre que vous mettez à disposition')
                 )
             ->add(
-                'save', SubmitType::class, [
-                    'label' => 'Valider votre annonce',
-                    'attr' => [
-                        'class' => 'btn btn-primary'
-                ]
-                ]
-            )
-            ->add(
                 'images', 
                 CollectionType::class,
-                ['entry_type' => ImageType::class]
+                ['entry_type' => ImageType::class,
+                    'allow_add' => true
+                ]
             )
         ;
         

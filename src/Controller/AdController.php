@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ad;
 use App\Form\AdType;
+use App\Entity\Image;
 use App\Repository\AdRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +27,15 @@ class AdController extends AbstractController
     public function create(Request $request, EntityManagerInterface $manager) :Response
     {
         $ad = new Ad();
+
+        $image = (new Image())
+            ->setUrl('jijo')
+            ->setCaption('hoih')
+        ;
+        
+        $ad->addImage($image)
+            ->addImage($image)
+        ;
 
         $this->addFlash('success', "Ad {$ad->getTitle()} created successfully");
 
