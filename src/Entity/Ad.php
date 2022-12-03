@@ -3,22 +3,34 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: AdRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['title'],
+    message: "Une autre annonce possède déjà ce titre, merci de le modifier"
+)]
 class Ad
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Assert\Type('integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 10,
+        max: 225,
+        minMessage: 'Le titre doit faire plus de 10 caractères !',
+        maxMessage: 'Le titre ne peut pas faire plus de 225 caractères !',
+    )]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
@@ -28,18 +40,28 @@ class Ad
     private ?float $price = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(
+        min: 20,
+        minMessage: 'Votre introduction doit faire plus de 20 caractères',
+    )]
     private ?string $introduction = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(
+        min: 100,
+        minMessage: 'Le contenu ne peut pas faire moins de 100 caractères !',
+    )]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Url]
     private ?string $coverImage = null;
 
     #[ORM\Column]
     private ?int $rooms = null;
 
     #[ORM\OneToMany(mappedBy: 'ad', targetEntity: Image::class, orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $images;
 
     public function __construct()

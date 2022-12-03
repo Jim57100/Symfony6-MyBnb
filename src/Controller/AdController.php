@@ -27,33 +27,33 @@ class AdController extends AbstractController
     public function create(Request $request, EntityManagerInterface $manager) :Response
     {
         $ad = new Ad();
-
-        $image = (new Image())
-            ->setUrl('jijo')
-            ->setCaption('hoih')
-        ;
         
-        $ad->addImage($image)
-            ->addImage($image)
-        ;
-
-        $this->addFlash('success', "Ad {$ad->getTitle()} created successfully");
-
         $form = $this->createForm(AdType::class, $ad);
-       
+        
         $form->handleRequest($request);
-       
+        
         if($form->isSubmitted() && $form->isValid()) {
+            
+            //persister les images en relation avec les Ad
+            foreach($ad->getImages() as $image) {
+                $image->setAd($ad);
+                $manager->persist($image);
+            }
+            
             $manager->persist($ad);
             $manager->flush();
-
+            
+            //Message flash
+            $this->addFlash('success', "Ad {$ad->getTitle()} created successfully");
+            
             return $this->redirectToRoute('ads_show', [
                 'slug' => $ad->getSlug()
             ]);
         }
 
         return $this->render('ad/create.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'ad' => $ad
         ]);
     }
     
@@ -77,5 +77,28 @@ class AdController extends AbstractController
             'ad' => $ad,
         ]);
     }
+    
+    #[Route('/ads/{slug}/edit', name:'ads_edit')]
+    public function edit(Ad $ad, Request $request, EntityManagerInterface $manager) {
 
+        $form = $this->createForm(AdType::class, $ad);
+        
+        $form->handleRequest($request);
+        
+        if($form->isSubmitted() && $form->isValid()) {
+            foreach($ad->getImages() as $image) {
+                $image->setAd($ad);
+                $manager->persist($image);
+            }
+            
+            $manager->persist($ad);
+            $manager->flush();
+            
+            //Message flash
+            $this->addFlash('success', "Ad {$ad->getTitle()} created successfully");
+        } 
+        return $this->render('ad/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 }

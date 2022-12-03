@@ -2,71 +2,21 @@
 
 {% block title %}Créer une annonce{% endblock %}
 
-{% form_theme form _self %}
+{% form_theme form 'ad/_collection.html.twig' %}
 
 {% block body %}
-<div class="container">
-  <h1>Créer une nouvelle annonce</h1>
+  <div class="container">
+    <h1>Créer une nouvelle annonce</h1>
 
-  {{ form_start(form) }}
+    {{ form_start(form) }}
 
-  {{ form_widget(form) }}
-  <button type="submit" class="btn btn-primary mt-3">Créer une nouvelle annonce</button>
-  {{ form_end(form) }}
-</div>
-{% endblock %}
-
-{% block _ad_images_widget %}
-<p>Ici, vous pouvez ajouter vos propres images !</p>
-{{ form_widget(form) }}
-<div class="form-group">
-  <button type="button" id="add-image" class="btn btn-primary mt-3">Ajoutez une image</button>
-</div>
-{% endblock %}
-
-{% block _ad_images_entry_row %}
-{{ form_widget(form) }}
-{% endblock %}
-
-{% block _ad_images_entry_widget %}
-<div class="form-group" id="block_{{id}}">
-  <div class="row">
-    <div class="col-10">
-      <div class="col">
-        {{ form_widget(form.url) }}
-      </div>
-      <div class="col">
-        {{ form_widget(form.caption)}}
-      </div>
-    </div>
-    <div class="col-2">
-      <button type="button" class="btn btn-danger" data-target="block_{{id}}" data-action="delete">X</button>
-    </div>
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-primary mt-3">Créer une nouvelle annonce</button>
+    {{ form_end(form) }}
   </div>
-</div>
 {% endblock %}
+
 
 {% block javascripts %}
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('add-image').addEventListener('clic', () => {
-      //récupère le numéro des futurs champs
-      const index = document.getElementsByTagName('#ad_images div.form-group')
-      .length; //renvoi un tableau des div
-      console.log(index);
-      //récupère le prototype des entrées et le remplace plusieurs fois par la valeur de la variable index
-      const template = document.getElementsByTagName('#ad_images').data('prototype').replace(/__name__/g,
-      index);
-      document.getElementsByTagName('#ad_images').append(template);
-    
-      handleDeleteButtons();
-    });
-  })
-
-  function handleDeleteButtons() {
-    $('button[data-action="delete"]').click(() => {
-      const target = this.dataset.target;
-    })
-  }
-</script>
+  <script src="/js/ad.js"></script>
 {% endblock %}

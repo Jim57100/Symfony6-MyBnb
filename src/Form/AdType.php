@@ -17,20 +17,21 @@ use App\Form\ImageType;
 class AdType extends AbstractType
 {
     /**
-     * Permet de configurer un champ d'un formulaire
+     * Permet de personnaliser un champ d'un formulaire
      *
-     * @param [type] $label
-     * @param [type] $placeholder
+     * @param string $label
+     * @param string $placeholder
+     * @param array $options
      * @return array
      */
-    private function getFormConfiguration($label, $placeholder) 
+    private function getFormConfiguration($label, $placeholder, $options = []) 
     {
-        return [
+        return array_merge([
             'label' => $label,
             'attr' => [
                 'placeholder' => $placeholder
             ]
-        ];
+        ], $options);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -39,7 +40,9 @@ class AdType extends AbstractType
             ->add(
                 'title', TextType::class, $this->getFormConfiguration('Titre', 'Titre de l\'annonce')
                 )
-            ->add('slug', TextType::class, $this->getFormConfiguration('Url', 'Nom de l\'url automatique')
+            ->add('slug', TextType::class, $this->getFormConfiguration('Url', 'Nom de l\'url automatique', [
+                'required' => false
+            ])
             )
             ->add(
                 'coverImage', UrlType::class, $this->getFormConfiguration('Url de l\'image principale', 'Donnez l\'adresse de l\'image qui donne envie')
@@ -58,9 +61,10 @@ class AdType extends AbstractType
                 )
             ->add(
                 'images', 
-                CollectionType::class,
-                ['entry_type' => ImageType::class,
-                    'allow_add' => true
+                CollectionType::class, [                //sous-formulaire pouvant se répéter à la demande
+                    'entry_type' => ImageType::class,
+                    'allow_add' => true,
+                    'allow_delete' => true
                 ]
             )
         ;
